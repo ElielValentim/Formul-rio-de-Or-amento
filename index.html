@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valensoft - Orçamento de Projetos</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="assets/logo.png" alt="Valensoft Logo" class="logo">
+        </div>
+        
+        <div class="form-container">
+            <form id="orcamentoForm" class="form-container">
+                <div class="form-section">
+                    <h2>Dados do Cliente</h2>
+                    <div class="form-group">
+                        <label for="nome">Nome*</label>
+                        <input type="text" id="nome" name="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail*</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefone">Telefone*</label>
+                        <input type="tel" id="telefone" name="telefone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="empresa">Empresa</label>
+                        <input type="text" id="empresa" name="empresa">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Informações do Projeto</h2>
+                    <div class="form-group">
+                        <label for="tipoProjeto">Tipo de Projeto*</label>
+                        <select id="tipoProjeto" name="tipoProjeto" required>
+                            <option value="">Selecione...</option>
+                            <option value="site">Site</option>
+                            <option value="app">Aplicativo</option>
+                            <option value="loja">Loja Virtual</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Funcionalidades Desejadas*</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="funcionalidades" value="cadastro"> Cadastro de Usuários</label>
+                            <label><input type="checkbox" name="funcionalidades" value="pedidos"> Sistema de Pedidos</label>
+                            <label><input type="checkbox" name="funcionalidades" value="pagamentos"> Integração de Pagamentos</label>
+                            <label><input type="checkbox" name="funcionalidades" value="rastreamento"> Rastreamento de Entregas</label>
+                            <label><input type="checkbox" name="funcionalidades" value="admin"> Painel Administrativo</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="design">Necessidade de Design*</label>
+                        <select id="design" name="design" required>
+                            <option value="">Selecione...</option>
+                            <option value="possui">Já possui identidade visual</option>
+                            <option value="criar">Precisa criar identidade visual</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Prazos e Investimento</h2>
+                    <div class="form-group">
+                        <label for="prazo">Prazo Desejado*</label>
+                        <select id="prazo" name="prazo" required>
+                            <option value="">Selecione...</option>
+                            <option value="1-3">1-3 meses</option>
+                            <option value="3-6">3-6 meses</option>
+                            <option value="6+">Mais de 6 meses</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="orcamento">Faixa de Investimento*</label>
+                        <select id="orcamento" name="orcamento" required>
+                            <option value="">Selecione...</option>
+                            <option value="ate-20k">Até R$ 20.000</option>
+                            <option value="20k-50k">R$ 20.000 - R$ 50.000</option>
+                            <option value="50k+">Acima de R$ 50.000</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="suporte">Deseja incluir suporte pós-lançamento?*</label>
+                        <select id="suporte" name="suporte" required>
+                            <option value="">Selecione...</option>
+                            <option value="sim">Sim</option>
+                            <option value="nao">Não</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Detalhes Técnicos do Projeto</h3>
+                    
+                    <div class="input-group">
+                        <label for="plataforma">Plataforma Principal:*</label>
+                        <select id="plataforma" name="plataforma" required>
+                            <option value="">Selecione a plataforma</option>
+                            <option value="web">Web (Navegadores)</option>
+                            <option value="android">Android</option>
+                            <option value="ios">iOS</option>
+                            <option value="hibrido">Aplicativo Híbrido</option>
+                            <option value="todos">Todas as Plataformas</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="integracao">Integrações Necessárias (Opcional):</label>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="integracoes" value="apis"> APIs de Terceiros
+                            </label>
+                            <label>
+                                <input type="checkbox" name="integracoes" value="erp"> Sistema ERP
+                            </label>
+                            <label>
+                                <input type="checkbox" name="integracoes" value="crm"> CRM
+                            </label>
+                            <label>
+                                <input type="checkbox" name="integracoes" value="analytics"> Analytics
+                            </label>
+                            <label>
+                                <input type="checkbox" name="integracoes" value="social"> Redes Sociais
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="usuarios">Número Estimado de Usuários:*</label>
+                        <select id="usuarios" name="usuarios" required>
+                            <option value="">Selecione o número de usuários</option>
+                            <option value="pequeno">Até 100 usuários</option>
+                            <option value="medio">101 a 1.000 usuários</option>
+                            <option value="grande">1.001 a 10.000 usuários</option>
+                            <option value="enterprise">Mais de 10.000 usuários</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Requisitos Adicionais (Opcionais)</h3>
+                    
+                    <div class="input-group">
+                        <label>Requisitos de Segurança:</label>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="seguranca" value="autenticacao"> Autenticação em Dois Fatores
+                            </label>
+                            <label>
+                                <input type="checkbox" name="seguranca" value="criptografia"> Criptografia de Dados
+                            </label>
+                            <label>
+                                <input type="checkbox" name="seguranca" value="backup"> Backup Automático
+                            </label>
+                            <label>
+                                <input type="checkbox" name="seguranca" value="auditoria"> Logs de Auditoria
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Suporte a Idiomas:</label>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="idiomas" value="pt"> Português
+                            </label>
+                            <label>
+                                <input type="checkbox" name="idiomas" value="en"> Inglês
+                            </label>
+                            <label>
+                                <input type="checkbox" name="idiomas" value="es"> Espanhol
+                            </label>
+                            <label>
+                                <input type="checkbox" name="idiomas" value="outros"> Outros
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Requisitos de Acessibilidade:</label>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="acessibilidade" value="wcag"> Conformidade WCAG
+                            </label>
+                            <label>
+                                <input type="checkbox" name="acessibilidade" value="contraste"> Alto Contraste
+                            </label>
+                            <label>
+                                <input type="checkbox" name="acessibilidade" value="leitor"> Suporte a Leitor de Tela
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">Gerar Orçamento</button>
+            </form>
+        </div>
+
+        <div class="resultado-container">
+            <div id="resultadoOrcamento" class="resultado-container" style="display: none;">
+                <!-- Resultado será inserido aqui via JavaScript -->
+            </div>
+            <button id="downloadPDF" class="download-button" style="display: none;">
+                Baixar Orçamento em PDF
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js',
+        {
+            "particles": {
+                "number": {
+                    "value": 120,
+                    "density": {
+                        "enable": true,
+                        "value_area": 1000
+                    }
+                },
+                "color": {
+                    "value": ["#00ffff", "#0066cc"]
+                },
+                "shape": {
+                    "type": ["circle", "triangle"],
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    }
+                },
+                "opacity": {
+                    "value": 0.15,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 1,
+                        "opacity_min": 0.05,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 2,
+                        "size_min": 0.5,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#00ffff",
+                    "opacity": 0.15,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1.5,
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": true,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 200,
+                        "line_linked": {
+                            "opacity": 0.3
+                        }
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+    <script src="script.js"></script>
+    <script>
+        function gerarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text("Teste de PDF", 10, 10);
+            doc.save("teste.pdf");
+        }
+    </script>
+    <script>
+        document.getElementById('orcamentoForm').addEventListener('submit', (e) => {
+            e.preventDefault(); // Evita o envio do formulário
+
+            const dados = {
+                // ... outros dados
+                integracoes: Array.from(document.querySelectorAll('input[name="integracoes"]:checked')).map(input => input.value) || [],
+                seguranca: Array.from(document.querySelectorAll('input[name="seguranca"]:checked')).map(input => input.value) || [],
+                idiomas: Array.from(document.querySelectorAll('input[name="idiomas"]:checked')).map(input => input.value) || [],
+                acessibilidade: Array.from(document.querySelectorAll('input[name="acessibilidade"]:checked')).map(input => input.value) || [],
+            };
+
+            // Verifique se integracoes é um array
+            const integracoes = dados.integracoes || [];
+            if (!Array.isArray(integracoes)) {
+                console.error("Integracoes não é um array");
+            }
+
+            // Continue com o cálculo do orçamento...
+        });
+    </script>
+</body>
+</html> 
