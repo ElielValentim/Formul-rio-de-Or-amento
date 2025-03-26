@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         desenvolvimento: {
             site: { min: 8000, max: 20000 },
             app: { min: 15000, max: 30000 },
-            loja: { min: 12000, max: 25000 }
         },
         infraestrutura: { min: 2000, max: 5000 },
         testes: { min: 1000, max: 3000 },
