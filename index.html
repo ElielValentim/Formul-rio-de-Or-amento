@@ -43,7 +43,6 @@
                             <option value="">Selecione...</option>
                             <option value="site">Site</option>
                             <option value="app">Aplicativo</option>
-                            <option value="loja">Loja Virtual</option>
                         </select>
                     </div>
 
@@ -158,61 +157,23 @@
                                 <input type="checkbox" name="seguranca" value="autenticacao"> Autenticação em Dois Fatores
                             </label>
                             <label>
-                                <input type="checkbox" name="seguranca" value="criptografia"> Criptografia de Dados
-                            </label>
-                            <label>
                                 <input type="checkbox" name="seguranca" value="backup"> Backup Automático
                             </label>
-                            <label>
-                                <input type="checkbox" name="seguranca" value="auditoria"> Logs de Auditoria
-                            </label>
                         </div>
                     </div>
 
-                    <div class="input-group">
-                        <label>Suporte a Idiomas:</label>
-                        <div class="checkbox-group">
-                            <label>
-                                <input type="checkbox" name="idiomas" value="pt"> Português
-                            </label>
-                            <label>
-                                <input type="checkbox" name="idiomas" value="en"> Inglês
-                            </label>
-                            <label>
-                                <input type="checkbox" name="idiomas" value="es"> Espanhol
-                            </label>
-                            <label>
-                                <input type="checkbox" name="idiomas" value="outros"> Outros
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Requisitos de Acessibilidade:</label>
-                        <div class="checkbox-group">
-                            <label>
-                                <input type="checkbox" name="acessibilidade" value="wcag"> Conformidade WCAG
-                            </label>
-                            <label>
-                                <input type="checkbox" name="acessibilidade" value="contraste"> Alto Contraste
-                            </label>
-                            <label>
-                                <input type="checkbox" name="acessibilidade" value="leitor"> Suporte a Leitor de Tela
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
+                
                 <button type="submit" class="submit-button">Gerar Orçamento</button>
             </form>
         </div>
 
         <div class="resultado-container">
             <div id="resultadoOrcamento" class="resultado-container" style="display: none;">
+                
                 <!-- Resultado será inserido aqui via JavaScript -->
             </div>
             <button id="downloadPDF" class="download-button" style="display: none;">
-                Baixar Orçamento em PDF
+                Enviar Orçamento para o Desenvolvedor
             </button>
         </div>
     </div>
