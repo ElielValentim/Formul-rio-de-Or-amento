@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('orcamentoForm');
     const resultadoContainer = document.getElementById('resultadoOrcamento');
-    const downloadPDFButton = document.getElementById('downloadPDF');
+    const enviarWhatsAppButton = document.getElementById('enviarWhatsApp');
+
 
     // Valores base para cálculo do orçamento
     const valoresBase = {
@@ -182,10 +183,13 @@ document.addEventListener('DOMContentLoaded', () => {
             minTotal: Math.round(minTotal),
             maxTotal: Math.round(maxTotal)
         };
-
-        // Mostrar o botão de download
-        downloadPDFButton.style.display = 'inline-flex';
         
+        // Mostrar o botão de envio via WhatsApp
+        const enviarWhatsAppButton = document.getElementById('enviarWhatsApp');
+        if (enviarWhatsAppButton) {
+            enviarWhatsAppButton.style.display = 'inline-flex';
+        }
+
         // Armazenar os dados do orçamento
         const dadosOrcamento = {
             nome: document.getElementById('nome').value,
@@ -200,11 +204,18 @@ document.addEventListener('DOMContentLoaded', () => {
             integracoes: dados.integracoes || [],
             seguranca: dados.seguranca || [],
             idiomas: dados.idiomas || [],
-            acessibilidade: dados.acessibilidade || []
+            acessibilidade: dados.acessibilidade || [],
+            empresa: dados.empresa,
+            design: dados.design,
+            orcamento: dados.orcamento,
+            suporte: dados.suporte
         };
         
-        // Adicionar evento de click para o botão de download
-        downloadPDFButton.onclick = () => gerarPDF(dadosOrcamento);
+        // Captura o telefone do cliente
+        const telefoneCliente = document.getElementById('telefone').value;
+
+        // Adicionar evento de click para envio pelo WhatsApp
+        enviarWhatsAppButton.onclick = () => enviarParaWhatsApp(dadosOrcamento, telefoneCliente);
 
         return valorTotal;
     }
@@ -228,26 +239,46 @@ document.addEventListener('DOMContentLoaded', () => {
             return nomes[f];
         }).join(', ');
 
+        const integracoesTexto = dados.integracoes.length > 0 ? dados.integracoes.join(', ') : 'Nenhuma';
+        const segurancaTexto = dados.seguranca.length > 0 ? dados.seguranca.join(', ') : 'Nenhuma';
+
         const html = `
-            <h3>Orçamento Estimado</h3>
-            <p>Valor estimado: ${formatarMoeda(orcamento.minTotal)} a ${formatarMoeda(orcamento.maxTotal)}</p>
+            <h3>Orçamento Detalhado</h3>
             
-            <h4>Detalhes do Projeto:</h4>
+            <h4>Dados do Cliente</h4>
+            <ul>
+                <li><strong>Nome:</strong> ${dados.nome}</li>
+                <li><strong>E-mail:</strong> ${dados.email}</li>
+                <li><strong>Telefone:</strong> ${dados.telefone}</li>
+                <li><strong>Empresa:</strong> ${dados.empresa || 'Não informado'}</li>
+            </ul>
+
+            <h4>Detalhes do Projeto</h4>
             <ul>
                 <li><strong>Tipo de Projeto:</strong> ${dados.tipoProjeto.charAt(0).toUpperCase() + dados.tipoProjeto.slice(1)}</li>
                 <li><strong>Design:</strong> ${dados.design === 'possui' ? 'Já possui identidade visual' : 'Necessita criar identidade visual'}</li>
                 <li><strong>Funcionalidades:</strong> ${funcionalidadesTexto}</li>
+                <li><strong>Plataforma:</strong> ${dados.plataforma}</li>
+                <li><strong>Número de Usuários:</strong> ${dados.usuarios}</li>
+                <li><strong>Integrações:</strong> ${integracoesTexto}</li>
+                <li><strong>Segurança:</strong> ${segurancaTexto}</li>
+            </ul>
+
+            <h4>Prazos e Investimento</h4>
+            <ul>
                 <li><strong>Prazo Estimado:</strong> ${dados.prazo}</li>
+                <li><strong>Faixa de Investimento Desejada:</strong> ${dados.orcamento}</li>
                 <li><strong>Suporte Pós-lançamento:</strong> ${dados.suporte === 'sim' ? 'Incluído' : 'Não incluído'}</li>
             </ul>
+
+            <h4>Valor Estimado</h4>
+            <p class="valor-estimado">💰 ${formatarMoeda(orcamento.minTotal)} a ${formatarMoeda(orcamento.maxTotal)}</p>
 
             <p class="observacao">* Este é um orçamento estimado. O valor final pode variar de acordo com requisitos específicos do projeto.</p>
         `;
 
         resultadoContainer.innerHTML = html;
         resultadoContainer.style.display = 'block';
-
-        // Scroll suave até o resultado
         resultadoContainer.scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -267,17 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.target.value = value;
     });
 
-    function gerarPDF(dadosOrcamento) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        // Configurações iniciais
-        const azulValensoft = [0, 102, 204];
-        const cinzaTexto = [60, 60, 60];
-        const margemEsquerda = 20;
-        let yPos = 0;
-        
-        // Função auxiliar para formatar moeda
+    function enviarParaWhatsApp(dadosOrcamento, telefoneCliente) {
         const formatarMoeda = (valor) => {
             return valor.toLocaleString('pt-BR', {
                 style: 'currency',
@@ -285,153 +306,76 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        // Função para desenhar linha decorativa
-        function desenharLinha(y) {
-            doc.setDrawColor(...azulValensoft);
-            doc.setLineWidth(0.5);
-            doc.line(margemEsquerda, y, 190, y);
-        }
-
-        // Cabeçalho
-        doc.setFillColor(...azulValensoft);
-        doc.rect(0, 0, 210, 40, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(24);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Orçamento Valensoft', 105, 25, { align: 'center' });
-
-        // Subtítulo com data
-        const dataFormatada = new Date().toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric'
-        });
-        doc.setFontSize(12);
-        doc.text(`Gerado em ${dataFormatada}`, 105, 35, { align: 'center' });
-
-        // Informações do Cliente
-        yPos = 60;
-        doc.setTextColor(...cinzaTexto);
-        doc.setFontSize(16);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Dados do Cliente', margemEsquerda, yPos);
-        
-        yPos += 10;
-        desenharLinha(yPos);
-        
-        yPos += 10;
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
-        const dadosCliente = [
-            { label: 'Nome:', valor: dadosOrcamento.nome },
-            { label: 'E-mail:', valor: dadosOrcamento.email },
-            { label: 'Telefone:', valor: dadosOrcamento.telefone }
-        ];
-
-        dadosCliente.forEach(dado => {
-            doc.setFont('helvetica', 'bold');
-            doc.text(dado.label, margemEsquerda, yPos);
-            doc.setFont('helvetica', 'normal');
-            doc.text(dado.valor, margemEsquerda + 30, yPos);
-            yPos += 10;
-        });
-
-        // Detalhes do Projeto
-        yPos += 10;
-        doc.setFontSize(16);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Detalhes do Projeto', margemEsquerda, yPos);
-        
-        yPos += 10;
-        desenharLinha(yPos);
-        
-        yPos += 10;
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
-
-        // Tipo de Projeto
-        doc.setFont('helvetica', 'bold');
-        doc.text('Tipo de Projeto:', margemEsquerda, yPos);
-        doc.setFont('helvetica', 'normal');
-        doc.text(dadosOrcamento.tipoProjeto.charAt(0).toUpperCase() + dadosOrcamento.tipoProjeto.slice(1), margemEsquerda + 50, yPos);
-
-        // Funcionalidades
-        yPos += 20;
-        doc.setFont('helvetica', 'bold');
-        doc.text('Funcionalidades Selecionadas:', margemEsquerda, yPos);
-        
-        const nomesFuncionalidades = {
-            cadastro: 'Cadastro de Usuários',
-            pedidos: 'Sistema de Pedidos',
-            pagamentos: 'Integração de Pagamentos',
-            rastreamento: 'Rastreamento de Entregas',
-            admin: 'Painel Administrativo'
+        // Traduzir valores para textos mais amigáveis
+        const traduzirFaixaOrcamento = {
+            'ate-20k': 'Até R$ 20.000',
+            '20k-50k': 'R$ 20.000 - R$ 50.000',
+            '50k+': 'Acima de R$ 50.000'
         };
 
-        yPos += 10;
-        doc.setFont('helvetica', 'normal');
-        dadosOrcamento.funcionalidades.forEach(func => {
-            doc.text(`• ${nomesFuncionalidades[func] || func}`, margemEsquerda + 5, yPos);
-            yPos += 8;
-        });
+        const traduzirUsuarios = {
+            'pequeno': 'Até 100 usuários',
+            'medio': '101 a 1.000 usuários',
+            'grande': '1.001 a 10.000 usuários',
+            'enterprise': 'Mais de 10.000 usuários'
+        };
 
-        // Orçamento
-        yPos += 20;
-        doc.setFontSize(16);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Investimento', margemEsquerda, yPos);
+        let mensagem = `*Orçamento Valensoft*\n\n`;
         
-        yPos += 10;
-        desenharLinha(yPos);
+        // Dados do Cliente
+        mensagem += `📋 *Dados do Cliente*\n`;
+        mensagem += `👤 Nome: ${dadosOrcamento.nome}\n`;
+        mensagem += `📧 E-mail: ${dadosOrcamento.email}\n`;
+        mensagem += `📱 Telefone: ${dadosOrcamento.telefone}\n`;
+        mensagem += `🏢 Empresa: ${dadosOrcamento.empresa || 'Não informado'}\n\n`;
         
-        yPos += 15;
-        doc.setFontSize(14);
-        doc.setTextColor(...azulValensoft);
-        doc.text('Valor Estimado:', margemEsquerda, yPos);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`${formatarMoeda(dadosOrcamento.valorTotal.minTotal)} a ${formatarMoeda(dadosOrcamento.valorTotal.maxTotal)}`, margemEsquerda + 50, yPos);
-
-        // Observações e Rodapé
-        yPos += 20;
-        doc.setFontSize(10);
-        doc.setTextColor(128, 128, 128);
-        doc.text('Observações:', margemEsquerda, yPos);
-        yPos += 7;
-        doc.text('1. Este orçamento é uma estimativa inicial baseada nas informações fornecidas.', margemEsquerda, yPos);
-        yPos += 7;
-        doc.text('2. O valor final pode variar de acordo com requisitos específicos identificados durante o projeto.', margemEsquerda, yPos);
-        yPos += 7;
-        doc.text('3. Orçamento válido por 15 dias a partir da data de geração.', margemEsquerda, yPos);
-
-        // Linha divisória
-        yPos += 15;
-        desenharLinha(yPos);
-
-        // Informações de Prazo e Escopo
-        yPos += 15;
-        doc.setFont('helvetica', 'normal');
-        doc.text('• Prazo Estimado: ' + dadosOrcamento.prazo + ' meses', margemEsquerda, yPos);
-        yPos += 7;
-        doc.text('• Inclui planejamento, desenvolvimento e implementação', margemEsquerda, yPos);
-        yPos += 7;
-        doc.text('• Suporte técnico durante o desenvolvimento', margemEsquerda, yPos);
-
-        // Linha divisória final
-        yPos += 15;
-        desenharLinha(yPos);
-
-        // Rodapé com informações de contato
-        yPos += 15;
-        doc.setTextColor(...azulValensoft);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Valensoft - Desenvolvimento de Software', 105, yPos, { align: 'center' });
-
-        yPos += 7;
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(128, 128, 128);
-        doc.text('contato@valensoft.com.br | (91) 99289-1008', 105, yPos, { align: 'center' });
-
-        // Salvar o PDF
-        doc.save('orcamento-valensoft.pdf');
+        // Detalhes do Projeto
+        mensagem += `🔧 *Detalhes do Projeto*\n`;
+        mensagem += `📱 Tipo: ${dadosOrcamento.tipoProjeto.charAt(0).toUpperCase() + dadosOrcamento.tipoProjeto.slice(1)}\n`;
+        mensagem += `🎨 Design: ${dadosOrcamento.design === 'possui' ? 'Já possui identidade visual' : 'Necessita criar identidade visual'}\n`;
+        mensagem += `⚙️ Funcionalidades: ${dadosOrcamento.funcionalidades.join(", ")}\n`;
+        mensagem += `💻 Plataforma: ${dadosOrcamento.plataforma}\n`;
+        mensagem += `👥 Usuários: ${traduzirUsuarios[dadosOrcamento.usuarios]}\n`;
+        
+        // Integrações e Segurança
+        if (dadosOrcamento.integracoes.length > 0) {
+            mensagem += `🔄 Integrações: ${dadosOrcamento.integracoes.join(", ")}\n`;
+        }
+        if (dadosOrcamento.seguranca.length > 0) {
+            mensagem += `🔒 Segurança: ${dadosOrcamento.seguranca.join(", ")}\n`;
+        }
+        
+        // Prazos e Custos
+        mensagem += `\n⏱️ *Prazos e Investimento*\n`;
+        mensagem += `📅 Prazo Desejado: ${dadosOrcamento.prazo}\n`;
+        mensagem += `💼 Faixa de Investimento Pretendida: ${traduzirFaixaOrcamento[dadosOrcamento.orcamento]}\n`;
+        mensagem += `🛠️ Suporte Pós-lançamento: ${dadosOrcamento.suporte === 'sim' ? 'Incluído' : 'Não incluído'}\n\n`;
+        
+        // Valor Estimado
+        mensagem += `💰 *Investimento Estimado*\n`;
+        mensagem += `${formatarMoeda(dadosOrcamento.valorTotal.minTotal)} a ${formatarMoeda(dadosOrcamento.valorTotal.maxTotal)}\n\n`;
+        
+        mensagem += `_Orçamento gerado automaticamente pelo sistema Valensoft._`;
+        
+        // Criar o link para o WhatsApp
+        const numeroWhatsApp = "+5591992891008";
+        const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+        
+        // Abrir o link no WhatsApp
+        window.open(url, '_blank');
     }
-}); 
+
+    // Inicializar particles.js
+    if (document.getElementById('particles-js')) {
+        particlesJS('particles-js', {
+            "particles": {
+                "opacity": {
+                    "value": 0.08, // Reduzido de 0.15 para 0.08
+                },
+                "line_linked": {
+                    "opacity": 0.08, // Reduzido de 0.15 para 0.08
+                }
+            }
+        });
+    }
+});
