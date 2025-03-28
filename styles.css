@@ -44,7 +44,7 @@ body::before {
     right: 0;
     bottom: 0;
     background: 
-        linear-gradient(rgba(0, 26, 51, 0.95), rgba(0, 51, 102, 0.95));
+        linear-gradient(rgba(0, 26, 51, 0.98), rgba(0, 51, 102, 0.98));
     z-index: -1;
 }
 
@@ -68,7 +68,7 @@ body::after {
         </svg>');
     background-size: 250px 250px;
     background-repeat: repeat;
-    opacity: 0.15;
+    opacity: 0.08;
     z-index: -2;
     pointer-events: none;
 }
@@ -79,7 +79,7 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -3;
+    z-index: 0; /* Ajustar z-index */
 }
 
 .container {
@@ -87,15 +87,17 @@ body::after {
     margin: 0.5rem auto;
     padding: 0 1.5rem;
     position: relative;
+    z-index: 1; /* Garantir que o conteúdo fique acima do particles.js */
 }
 
 .logo-container {
-    max-width: 1200px;
+    max-width: 2200px;
     margin: 0 auto;
     text-align: center;
     position: relative;
     z-index: 1;
     padding: 0.5rem;
+    
 }
 
 .logo {
@@ -104,10 +106,16 @@ body::after {
     object-fit: contain;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
+    filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.3)); /* Reduzida intensidade da sombra */
+    transition: filter 0.3s ease; /* Adiciona transição suave */
+}
+
+.logo:hover {
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.4)); /* Reduzida intensidade do hover */
 }
 
 .header, .form-container, .resultado-container {
-    background: rgba(0, 26, 51, 0.85);
+    background: rgba(0, 26, 51, 0.95); /* Aumentado opacidade do fundo */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(0, 255, 255, 0.1);
@@ -134,7 +142,7 @@ body::after {
 
 h2 {
     color: var(--accent-color);
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.2); /* Reduzida intensidade do text-shadow */
     margin-bottom: 1.5rem;
     font-size: 1.8rem;
     font-weight: 600;
@@ -281,9 +289,17 @@ select option {
     font-weight: 600;
 }
 
+.resultado-container h4 {
+    color: var(--accent-color);
+    margin: 1.5rem 0 1rem;
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
 .resultado-container ul {
     list-style: none;
     padding: 0;
+    margin-bottom: 1.5rem;
 }
 
 .resultado-container li {
@@ -302,6 +318,25 @@ select option {
     position: absolute;
     left: 0.8rem;
     font-size: 1.2rem;
+}
+
+.valor-estimado {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    text-align: center;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: rgba(0, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.observacao {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    font-style: italic;
+    text-align: center;
+    margin-top: 1.5rem;
 }
 
 .download-button {
@@ -356,4 +391,4 @@ select option {
     h2 {
         font-size: 1.5rem;
     }
-} 
+}
